@@ -11,7 +11,8 @@ public enum ErrorCode {
     INVALID_PASSWORD(1003, "Password must be at least 8 characters"),
     CATEGORY_NOT_FOUND(1004, "Category not found"),
     NOT_EMPTY_CATEGORY_NAME(1005, "Category name must be not empty"),
-    DRINK_NOT_FOUND(1004, "Drink not found")
+    DRINK_NOT_FOUND(1006, "Drink not found"),
+    TOPPING_NOT_FOUND(1007, "Topping not found"),
     ;
 
     private final int code;
