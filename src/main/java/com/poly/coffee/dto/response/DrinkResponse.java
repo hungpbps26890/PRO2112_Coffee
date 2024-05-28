@@ -1,6 +1,7 @@
 package com.poly.coffee.dto.response;
 
 import com.poly.coffee.entity.Category;
+import com.poly.coffee.entity.Topping;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -19,4 +20,5 @@ public class DrinkResponse {
     Boolean isActive;
     List<String> images;
     Category category;
+    List<Topping> toppings;
 }

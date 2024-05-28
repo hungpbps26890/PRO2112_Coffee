@@ -4,6 +4,7 @@ import com.poly.coffee.constant.StatusCode;
 import com.poly.coffee.dto.request.DrinkRequest;
 import com.poly.coffee.dto.response.ApiResponse;
 import com.poly.coffee.dto.response.DrinkResponse;
+import com.poly.coffee.entity.Drink;
 import com.poly.coffee.service.DrinkService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +35,14 @@ public class DrinkController {
         return ApiResponse.<DrinkResponse>builder()
                 .code(StatusCode.SUCCESS_CODE)
                 .result(drinkService.getDrinkById(id))
+                .build();
+    }
+
+    @GetMapping("/drink/{id}")
+    public ApiResponse<Drink> findDrinkById(@PathVariable Long id) {
+        return ApiResponse.<Drink>builder()
+                .code(StatusCode.SUCCESS_CODE)
+                .result(drinkService.findDrinkById(id))
                 .build();
     }
 

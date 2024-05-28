@@ -86,7 +86,8 @@ public class DrinkServiceImpl implements DrinkService {
                 .collect(Collectors.toList());
     }
 
-    private Drink findDrinkById(Long id) {
+    @Override
+    public Drink findDrinkById(Long id) {
         return drinkRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.DRINK_NOT_FOUND));
     }

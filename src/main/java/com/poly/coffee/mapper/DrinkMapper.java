@@ -8,9 +8,11 @@ import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = "spring")
 public interface DrinkMapper {
+
     Drink toDrink(DrinkRequest request);
 
     void updateDrink(@MappingTarget Drink drink, DrinkRequest request);
 
     DrinkResponse toDrinkResponse(Drink drink);
+
 }

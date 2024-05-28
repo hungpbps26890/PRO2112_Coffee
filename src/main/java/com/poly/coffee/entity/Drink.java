@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -38,10 +39,10 @@ public class Drink {
     @JoinColumn(name = "category_id")
     private Category category;
 
-    @ManyToMany
+    @ManyToMany()
     @JoinTable(name = "drink_toppings",
             joinColumns = @JoinColumn(name = "drink_id"),
             inverseJoinColumns = @JoinColumn(name = "topping_id")
     )
-    private Set<Topping> toppings = new HashSet<>();
+    private List<Topping> toppings = new ArrayList<>();
 }

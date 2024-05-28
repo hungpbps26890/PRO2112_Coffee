@@ -1,5 +1,6 @@
 package com.poly.coffee.dto.request;
 
+import com.poly.coffee.entity.Topping;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -17,4 +18,5 @@ public class DrinkRequest {
     Boolean isActive;
     List<String> images;
     Long categoryId;
+    List<Topping> toppings;
 }
