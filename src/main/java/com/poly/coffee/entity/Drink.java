@@ -45,4 +45,7 @@ public class Drink {
             inverseJoinColumns = @JoinColumn(name = "topping_id")
     )
     private List<Topping> toppings = new ArrayList<>();
+
+    @OneToMany(mappedBy = "drink", cascade = CascadeType.ALL)
+    private List<DrinkSize> drinkSizes = new ArrayList<>();
 }

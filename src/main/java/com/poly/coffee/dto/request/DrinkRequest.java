@@ -1,5 +1,6 @@
 package com.poly.coffee.dto.request;
 
+import com.poly.coffee.entity.DrinkSize;
 import com.poly.coffee.entity.Topping;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -19,4 +20,5 @@ public class DrinkRequest {
     List<String> images;
     Long categoryId;
     List<Topping> toppings;
+    List<DrinkSize> drinkSizes;
 }

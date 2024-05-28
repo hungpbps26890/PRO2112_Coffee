@@ -13,6 +13,7 @@ public enum ErrorCode {
     NOT_EMPTY_CATEGORY_NAME(1005, "Category name must be not empty"),
     DRINK_NOT_FOUND(1006, "Drink not found"),
     TOPPING_NOT_FOUND(1007, "Topping not found"),
+    SIZE_NOT_FOUND(1008, "Size not found"),
     ;
 
     private final int code;
