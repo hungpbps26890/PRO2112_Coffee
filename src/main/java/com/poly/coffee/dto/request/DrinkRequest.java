@@ -14,7 +14,7 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class DrinkRequest {
     String name;
-    Long price;
+    Double price;
     String description;
     Boolean isActive;
     List<String> images;

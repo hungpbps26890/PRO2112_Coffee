@@ -1,30 +1,33 @@
 package com.poly.coffee.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.poly.coffee.model.DrinkSizeKey;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Immutable;
 
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "drink_sizes", uniqueConstraints = {
-    @UniqueConstraint(columnNames = { "drink_id", "size_id" })
-})
+@Table(name = "drink_sizes")
 public class DrinkSize {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @EmbeddedId
+    private DrinkSizeKey id;
 
-    private Long price;
+    private Double price;
 
+    @JsonIgnore
     @ManyToOne
+    @MapsId("drinkId")
     @JoinColumn(name = "drink_id")
     private Drink drink;
 
     @ManyToOne
+    @MapsId("sizeId")
     @JoinColumn(name = "size_id")
     private Size size;
 }

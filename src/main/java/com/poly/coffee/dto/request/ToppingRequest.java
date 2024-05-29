@@ -10,6 +10,6 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ToppingRequest {
     String name;
-    Long price;
+    Double price;
     Boolean isActive;
 }

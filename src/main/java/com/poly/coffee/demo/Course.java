@@ -1,4 +1,4 @@
-package com.poly.coffee.entity;
+package com.poly.coffee.demo;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -6,26 +6,23 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "sizes")
-public class Size {
+public class Course {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(columnDefinition = "nvarchar(50)")
     private String name;
 
-    private String character;
-
     @JsonIgnore
-    @OneToMany(mappedBy = "size", cascade = CascadeType.ALL)
-    private List<DrinkSize> drinkSizes = new ArrayList<>();
+    @OneToMany(mappedBy = "course")
+    private List<StudentCourse> studentCourses;
 }

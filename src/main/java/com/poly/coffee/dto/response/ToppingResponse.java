@@ -11,6 +11,6 @@ import lombok.experimental.FieldDefaults;
 public class ToppingResponse {
     Long id;
     String name;
-    Long price;
+    Double price;
     Boolean isActive;
 }

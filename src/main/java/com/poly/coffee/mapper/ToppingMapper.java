@@ -14,5 +14,4 @@ public interface ToppingMapper {
     void updateTopping(@MappingTarget Topping topping, ToppingRequest request);
 
     ToppingResponse toToppingResponse(Topping topping);
-
 }

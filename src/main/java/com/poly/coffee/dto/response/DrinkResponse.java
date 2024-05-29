@@ -7,6 +7,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.util.List;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -16,7 +17,7 @@ import java.util.List;
 public class DrinkResponse {
     Long id;
     String name;
-    Long price;
+    Double price;
     String description;
     Boolean isActive;
     List<String> images;

@@ -4,13 +4,16 @@ import com.poly.coffee.dto.request.DrinkRequest;
 import com.poly.coffee.dto.response.DrinkResponse;
 import com.poly.coffee.entity.Category;
 import com.poly.coffee.entity.Drink;
+import com.poly.coffee.entity.DrinkSize;
+import com.poly.coffee.entity.Size;
 import com.poly.coffee.exception.AppException;
 import com.poly.coffee.exception.ErrorCode;
-import com.poly.coffee.mapper.CategoryMapper;
 import com.poly.coffee.mapper.DrinkMapper;
+import com.poly.coffee.model.DrinkSizeKey;
 import com.poly.coffee.repository.CategoryRepository;
 import com.poly.coffee.repository.DrinkRepository;
-import com.poly.coffee.service.CategoryService;
+import com.poly.coffee.repository.DrinkSizeRepository;
+import com.poly.coffee.repository.SizeRepository;
 import com.poly.coffee.service.DrinkService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +34,10 @@ public class DrinkServiceImpl implements DrinkService {
 
     CategoryRepository categoryRepository;
 
+    SizeRepository sizeRepository;
+
+    DrinkSizeRepository drinkSizeRepository;
+
     @Override
     public DrinkResponse createDrink(DrinkRequest request) {
         Category category = categoryRepository.findById(request.getCategoryId())
@@ -40,7 +47,28 @@ public class DrinkServiceImpl implements DrinkService {
 
         drink.setCategory(category);
 
-        return drinkMapper.toDrinkResponse(drinkRepository.save(drink));
+        Drink newDrink = drinkRepository.save(drink);
+
+        newDrink.getDrinkSizes().addAll(
+                request
+                  .getDrinkSizes()
+                  .stream()
+                  .map(drinkSize -> {
+                      Size size = sizeRepository.findById(drinkSize.getSize().getId())
+                              .orElseThrow(() -> new AppException(ErrorCode.SIZE_NOT_FOUND));
+
+                      DrinkSize newDrinkSize = new DrinkSize();
+
+                      newDrinkSize.setId(new DrinkSizeKey(newDrink.getId(), size.getId()));
+                      newDrinkSize.setDrink(newDrink);
+                      newDrinkSize.setSize(size);
+                      newDrinkSize.setPrice(drinkSize.getPrice());
+
+                      return drinkSizeRepository.save(newDrinkSize);
+                  }).toList()
+        );
+
+        return drinkMapper.toDrinkResponse(drinkRepository.save(newDrink));
     }
 
     @Override
@@ -69,7 +97,28 @@ public class DrinkServiceImpl implements DrinkService {
 
         drink.setCategory(category);
 
-        return drinkMapper.toDrinkResponse(drinkRepository.save(drink));
+        Drink updatedDrink = drinkRepository.save(drink);
+
+        updatedDrink.getDrinkSizes().addAll(
+                request
+                        .getDrinkSizes()
+                        .stream()
+                        .map(drinkSize -> {
+                            Size size = sizeRepository.findById(drinkSize.getSize().getId())
+                                    .orElseThrow(() -> new AppException(ErrorCode.SIZE_NOT_FOUND));
+
+                            DrinkSize newDrinkSize = new DrinkSize();
+
+                            newDrinkSize.setId(new DrinkSizeKey(updatedDrink.getId(), size.getId()));
+                            newDrinkSize.setDrink(updatedDrink);
+                            newDrinkSize.setSize(size);
+                            newDrinkSize.setPrice(drinkSize.getPrice());
+
+                            return drinkSizeRepository.save(newDrinkSize);
+                        }).toList()
+        );
+
+        return drinkMapper.toDrinkResponse(drinkRepository.save(updatedDrink));
     }
 
     @Override
@@ -91,4 +140,5 @@ public class DrinkServiceImpl implements DrinkService {
         return drinkRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.DRINK_NOT_FOUND));
     }
+
 }

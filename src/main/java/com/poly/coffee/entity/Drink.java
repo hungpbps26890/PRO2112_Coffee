@@ -1,5 +1,7 @@
 package com.poly.coffee.entity;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -24,7 +26,7 @@ public class Drink {
     @Column(columnDefinition = "nvarchar(255)")
     private String name;
 
-    private Long price;
+    private Double price;
 
     @Column(columnDefinition = "nvarchar(MAX)")
     private String description;
@@ -46,6 +48,6 @@ public class Drink {
     )
     private List<Topping> toppings = new ArrayList<>();
 
-    @OneToMany(mappedBy = "drink", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "drink", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<DrinkSize> drinkSizes = new ArrayList<>();
 }

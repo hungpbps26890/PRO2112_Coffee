@@ -1,6 +1,5 @@
-package com.poly.coffee.entity;
+package com.poly.coffee.demo;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -15,21 +14,14 @@ import java.util.Set;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "toppings")
-public class Topping {
+public class Student {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(columnDefinition = "nvarchar(255)")
     private String name;
 
-    private Double price;
-
-    private Boolean isActive;
-
-    @JsonIgnore
-    @ManyToMany(mappedBy = "toppings")
-    private List<Drink> drinks = new ArrayList<>();
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
+    private List<StudentCourse> studentCourses = new ArrayList<>();
 }
