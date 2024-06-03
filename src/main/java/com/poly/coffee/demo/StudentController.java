@@ -5,7 +5,9 @@ import com.poly.coffee.dto.response.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
@@ -32,21 +34,21 @@ public class StudentController {
         newStudent.setName(request.getName());
 
         newStudent.getStudentCourses().addAll(
-          request.getStudentCourses().stream()
-                  .map(studentCourse -> {
-                      Course course = courseRepository.findById(studentCourse.getCourse().getId())
-                              .orElseThrow(() -> new RuntimeException("Course not found"));
+                request.getStudentCourses().stream()
+                        .map(studentCourse -> {
+                            Course course = courseRepository.findById(studentCourse.getCourse().getId())
+                                    .orElseThrow(() -> new RuntimeException("Course not found"));
 
-                      StudentCourse newStudentCourse = new StudentCourse();
+                            StudentCourse newStudentCourse = new StudentCourse();
 
-                      newStudentCourse.setId(new StudentCourseKey(newStudent.getId(), course.getId()));
+                            newStudentCourse.setId(new StudentCourseKey(newStudent.getId(), course.getId()));
 
-                      newStudentCourse.setStudent(newStudent);
-                      newStudentCourse.setCourse(course);
-                      newStudentCourse.setRating(studentCourse.getRating());
+                            newStudentCourse.setStudent(newStudent);
+                            newStudentCourse.setCourse(course);
+                            newStudentCourse.setRating(studentCourse.getRating());
 
-                      return studentCourseRepository.save(newStudentCourse);
-                  }).toList());
+                            return studentCourseRepository.save(newStudentCourse);
+                        }).toList());
 
         return ApiResponse.<Student>builder()
                 .code(StatusCode.SUCCESS_CODE)
@@ -58,6 +60,16 @@ public class StudentController {
     public ApiResponse<List<Student>> getAllStudents() {
         return ApiResponse.<List<Student>>builder()
                 .result(studentRepository.findAll()).build();
+    }
+
+    @GetMapping("/{id}")
+    public ApiResponse<Student> getStudentById(@PathVariable Long id) {
+        Student student = studentRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Student not found"));
+
+        return ApiResponse.<Student>builder()
+                .result(student)
+                .build();
     }
 
     @PutMapping("/{id}")
@@ -72,29 +84,29 @@ public class StudentController {
 
         Student updatedStudent = studentRepository.save(student);
 
-        updatedStudent.getStudentCourses().addAll(
-                request.getStudentCourses().stream()
-                        .map(studentCourse -> {
-                            Course course = courseRepository.findById(studentCourse.getCourse().getId())
-                                    .orElseThrow(() -> new RuntimeException("Course not found"));
+        Set<StudentCourse> updatedStudentCourses = request.getStudentCourses().stream()
+                .map(studentCourse -> {
+                    Course course = courseRepository.findById(studentCourse.getCourse().getId())
+                            .orElseThrow(() -> new RuntimeException("Course not found"));
 
-                            StudentCourse newStudentCourse = new StudentCourse();
+                    StudentCourse newStudentCourse = new StudentCourse();
 
-                            newStudentCourse.setId(new StudentCourseKey(updatedStudent.getId(), course.getId()));
+                    newStudentCourse.setId(new StudentCourseKey(updatedStudent.getId(), course.getId()));
 
-                            newStudentCourse.setStudent(updatedStudent);
-                            newStudentCourse.setCourse(course);
-                            newStudentCourse.setRating(studentCourse.getRating());
+                    newStudentCourse.setStudent(updatedStudent);
+                    newStudentCourse.setCourse(course);
+                    newStudentCourse.setRating(studentCourse.getRating());
 
+                    return newStudentCourse;
+                }).collect(Collectors.toSet());
 
-
-                            return studentCourseRepository.save(newStudentCourse);
-                        }).toList());
+        updatedStudent.getStudentCourses().addAll(updatedStudentCourses);
 
         return ApiResponse.<Student>builder()
                 .code(StatusCode.SUCCESS_CODE)
                 .message("Update student successfully")
-                .result(studentRepository.save(updatedStudent)).build();
+                .result(studentRepository.save(updatedStudent))
+                .build();
     }
 
     @DeleteMapping("/{id}")

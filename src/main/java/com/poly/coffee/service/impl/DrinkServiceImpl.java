@@ -15,6 +15,7 @@ import com.poly.coffee.repository.DrinkRepository;
 import com.poly.coffee.repository.DrinkSizeRepository;
 import com.poly.coffee.repository.SizeRepository;
 import com.poly.coffee.service.DrinkService;
+import com.poly.coffee.service.DrinkSizeService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -38,6 +39,8 @@ public class DrinkServiceImpl implements DrinkService {
 
     DrinkSizeRepository drinkSizeRepository;
 
+    DrinkSizeService drinkSizeService;
+
     @Override
     public DrinkResponse createDrink(DrinkRequest request) {
         Category category = categoryRepository.findById(request.getCategoryId())
@@ -51,21 +54,21 @@ public class DrinkServiceImpl implements DrinkService {
 
         newDrink.getDrinkSizes().addAll(
                 request
-                  .getDrinkSizes()
-                  .stream()
-                  .map(drinkSize -> {
-                      Size size = sizeRepository.findById(drinkSize.getSize().getId())
-                              .orElseThrow(() -> new AppException(ErrorCode.SIZE_NOT_FOUND));
+                        .getDrinkSizes()
+                        .stream()
+                        .map(drinkSize -> {
+                            Size size = sizeRepository.findById(drinkSize.getSize().getId())
+                                    .orElseThrow(() -> new AppException(ErrorCode.SIZE_NOT_FOUND));
 
-                      DrinkSize newDrinkSize = new DrinkSize();
+                            DrinkSize newDrinkSize = new DrinkSize();
 
-                      newDrinkSize.setId(new DrinkSizeKey(newDrink.getId(), size.getId()));
-                      newDrinkSize.setDrink(newDrink);
-                      newDrinkSize.setSize(size);
-                      newDrinkSize.setPrice(drinkSize.getPrice());
+                            newDrinkSize.setId(new DrinkSizeKey(newDrink.getId(), size.getId()));
+                            newDrinkSize.setDrink(newDrink);
+                            newDrinkSize.setSize(size);
+                            newDrinkSize.setPrice(drinkSize.getPrice());
 
-                      return drinkSizeRepository.save(newDrinkSize);
-                  }).toList()
+                            return drinkSizeRepository.save(newDrinkSize);
+                        }).toList()
         );
 
         return drinkMapper.toDrinkResponse(drinkRepository.save(newDrink));
@@ -99,24 +102,25 @@ public class DrinkServiceImpl implements DrinkService {
 
         Drink updatedDrink = drinkRepository.save(drink);
 
-        updatedDrink.getDrinkSizes().addAll(
-                request
-                        .getDrinkSizes()
-                        .stream()
-                        .map(drinkSize -> {
-                            Size size = sizeRepository.findById(drinkSize.getSize().getId())
-                                    .orElseThrow(() -> new AppException(ErrorCode.SIZE_NOT_FOUND));
+        List<DrinkSize> updatedDrinkSizes = request.getDrinkSizes()
+                .stream()
+                .map(drinkSize -> {
+                    Size size = sizeRepository.findById(drinkSize.getSize().getId())
+                            .orElseThrow(() -> new AppException(ErrorCode.SIZE_NOT_FOUND));
 
-                            DrinkSize newDrinkSize = new DrinkSize();
+                    DrinkSize newDrinkSize = new DrinkSize();
 
-                            newDrinkSize.setId(new DrinkSizeKey(updatedDrink.getId(), size.getId()));
-                            newDrinkSize.setDrink(updatedDrink);
-                            newDrinkSize.setSize(size);
-                            newDrinkSize.setPrice(drinkSize.getPrice());
+                    newDrinkSize.setId(new DrinkSizeKey(updatedDrink.getId(), size.getId()));
+                    newDrinkSize.setDrink(updatedDrink);
+                    newDrinkSize.setSize(size);
+                    newDrinkSize.setPrice(drinkSize.getPrice());
 
-                            return drinkSizeRepository.save(newDrinkSize);
-                        }).toList()
-        );
+                    return drinkSizeRepository.save(newDrinkSize);
+                }).toList();
+
+        drinkSizeService.deleteNotInUpdatedDrinkSizes(updatedDrink, updatedDrinkSizes);
+
+        updatedDrink.getDrinkSizes().addAll(updatedDrinkSizes);
 
         return drinkMapper.toDrinkResponse(drinkRepository.save(updatedDrink));
     }
