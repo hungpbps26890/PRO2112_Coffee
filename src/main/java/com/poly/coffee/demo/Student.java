@@ -4,11 +4,10 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Data
@@ -23,5 +22,6 @@ public class Student {
     private String name;
 
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
-    private List<StudentCourse> studentCourses = new ArrayList<>();
+    @Fetch(FetchMode.JOIN)
+    private Collection<StudentCourse> studentCourses = new HashSet<>();
 }
