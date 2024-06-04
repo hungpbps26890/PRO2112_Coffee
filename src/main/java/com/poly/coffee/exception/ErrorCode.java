@@ -2,27 +2,32 @@ package com.poly.coffee.exception;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 
 @Getter
 public enum ErrorCode {
-    UNCATEGORIZED_EXCEPTION(999, "Uncategorized exception"),
-    USER_EXISTED(1001, "User existed"),
-    USER_NOT_FOUND(1002, "User not found"),
-    USER_NOT_EXISTED(1003, "User not existed"),
-    INVALID_PASSWORD(1004, "Password must be at least 8 characters"),
-    UNAUTHENTICATED(1005, "User not existed"),
-    CATEGORY_NOT_FOUND(2001, "Category not found"),
-    NOT_EMPTY_CATEGORY_NAME(2002, "Category name must be not empty"),
-    DRINK_NOT_FOUND(3001, "Drink not found"),
-    TOPPING_NOT_FOUND(4001, "Topping not found"),
-    SIZE_NOT_FOUND(5001, "Size not found"),
+    UNCATEGORIZED_EXCEPTION(999, "Uncategorized exception", HttpStatus.INTERNAL_SERVER_ERROR),
+    USER_EXISTED(1001, "User existed", HttpStatus.BAD_REQUEST),
+    USER_NOT_FOUND(1002, "User not found", HttpStatus.NOT_FOUND),
+    USER_NOT_EXISTED(1003, "User not existed", HttpStatus.NOT_FOUND),
+    UNAUTHENTICATED(1004, "Unauthenticated", HttpStatus.UNAUTHORIZED),
+    UNAUTHORIZED(1006, "You do not have permission", HttpStatus.FORBIDDEN),
+    INVALID_PASSWORD(1005, "Password must be at least 8 characters", HttpStatus.BAD_REQUEST),
+    CATEGORY_NOT_FOUND(2001, "Category not found", HttpStatus.NOT_FOUND),
+    NOT_EMPTY_CATEGORY_NAME(2002, "Category name must be not empty", HttpStatus.BAD_REQUEST),
+    DRINK_NOT_FOUND(3001, "Drink not found", HttpStatus.NOT_FOUND),
+    TOPPING_NOT_FOUND(4001, "Topping not found", HttpStatus.NOT_FOUND),
+    SIZE_NOT_FOUND(5001, "Size not found", HttpStatus.NOT_FOUND),
     ;
 
     private final int code;
     private final String message;
+    private final HttpStatusCode httpStatusCode;
 
-    ErrorCode(int code, String message) {
+    ErrorCode(int code, String message, HttpStatusCode httpStatusCode) {
         this.code = code;
         this.message = message;
+        this.httpStatusCode = httpStatusCode;
     }
 }
