@@ -39,6 +39,7 @@ public class UserController {
         return apiResponse;
     }
 
+
     @GetMapping
     public ApiResponse<List<UserResponse>> getAllUsers() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -57,6 +58,14 @@ public class UserController {
         return ApiResponse.<UserResponse>builder()
                 .code(1000)
                 .result(userService.getUserById(id))
+                .build();
+    }
+
+    @GetMapping("/my-info")
+    public ApiResponse<UserResponse> getMyInfo() {
+        return ApiResponse.<UserResponse>builder()
+                .code(1000)
+                .result(userService.getMyInfo())
                 .build();
     }
 
