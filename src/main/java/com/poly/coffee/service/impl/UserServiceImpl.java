@@ -4,6 +4,7 @@ import com.poly.coffee.dto.request.UserCreationRequest;
 import com.poly.coffee.dto.request.UserUpdateRequest;
 import com.poly.coffee.dto.response.UserResponse;
 import com.poly.coffee.entity.User;
+import com.poly.coffee.enums.Role;
 import com.poly.coffee.exception.AppException;
 import com.poly.coffee.exception.ErrorCode;
 import com.poly.coffee.mapper.UserMapper;
@@ -17,6 +18,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,6 +41,10 @@ public class UserServiceImpl implements UserService {
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
 
         user.setPassword(passwordEncoder.encode(request.getPassword()));
+
+        HashSet<String> roles = new HashSet<>();
+        roles.add(Role.USER.name());
+        user.setRoles(roles);
 
         return userMapper.toUserResponse(userRepository.save(user));
     }
