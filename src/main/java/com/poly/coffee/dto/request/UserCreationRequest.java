@@ -1,5 +1,6 @@
 package com.poly.coffee.dto.request;
 
+import com.poly.coffee.validator.DobConstraint;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -20,5 +21,7 @@ public class UserCreationRequest {
 
     String firstName;
     String lastName;
+
+    @DobConstraint(min = 18, message = "INVALID_DOB")
     LocalDate dob;
 }
