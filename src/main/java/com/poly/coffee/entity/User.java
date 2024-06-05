@@ -24,5 +24,11 @@ public class User {
     private String firstName;
     private String lastName;
     private LocalDate dob;
-    private Set<String> roles;
+
+    @ManyToMany
+    @JoinTable(name = "user_roles",
+        joinColumns = @JoinColumn(name = "user_id"),
+        inverseJoinColumns = @JoinColumn(name = "role_name")
+    )
+    private Set<Role> roles;
 }
