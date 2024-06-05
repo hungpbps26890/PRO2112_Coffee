@@ -61,6 +61,7 @@ public class CategoryController {
 
     @DeleteMapping("/{id}")
     public ApiResponse<String> deleteCategory(@PathVariable Long id) {
+        categoryService.deleteCategory(id);
         return ApiResponse.<String>builder()
                 .code(StatusCode.SUCCESS_CODE)
                 .message("Category was deleted successfully")
