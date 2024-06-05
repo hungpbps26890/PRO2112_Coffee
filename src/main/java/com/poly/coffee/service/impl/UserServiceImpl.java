@@ -3,11 +3,13 @@ package com.poly.coffee.service.impl;
 import com.poly.coffee.dto.request.UserCreationRequest;
 import com.poly.coffee.dto.request.UserUpdateRequest;
 import com.poly.coffee.dto.response.UserResponse;
+import com.poly.coffee.entity.Role;
 import com.poly.coffee.entity.User;
-import com.poly.coffee.enums.Role;
+import com.poly.coffee.enums.RoleEnum;
 import com.poly.coffee.exception.AppException;
 import com.poly.coffee.exception.ErrorCode;
 import com.poly.coffee.mapper.UserMapper;
+import com.poly.coffee.repository.RoleRepository;
 import com.poly.coffee.repository.UserRepository;
 import com.poly.coffee.service.UserService;
 import lombok.AccessLevel;
@@ -33,7 +35,11 @@ public class UserServiceImpl implements UserService {
 
     UserRepository userRepository;
 
+    RoleRepository roleRepository;
+
     UserMapper userMapper;
+
+    PasswordEncoder passwordEncoder;
 
     @Override
     public UserResponse createRequest(UserCreationRequest request) {
@@ -42,13 +48,15 @@ public class UserServiceImpl implements UserService {
 
         User user = userMapper.toUser(request);
 
-        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
-
         user.setPassword(passwordEncoder.encode(request.getPassword()));
 
-        HashSet<String> roles = new HashSet<>();
-        roles.add(Role.USER.name());
-//        user.setRoles(roles);
+        HashSet<Role> roles = new HashSet<>();
+
+        Role roleUser = roleRepository.findById(RoleEnum.USER.name())
+                .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND));
+
+        roles.add(roleUser);
+        user.setRoles(roles);
 
         return userMapper.toUserResponse(userRepository.save(user));
     }
@@ -78,12 +86,18 @@ public class UserServiceImpl implements UserService {
         return userMapper.toUserResponse(user);
     }
 
+    @PreAuthorize("hasAuthority('UPDATE_DATA')")
     @Override
     public UserResponse updateUser(Long id, UserUpdateRequest request) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
 
        userMapper.updateUser(user, request);
+
+       user.setPassword(passwordEncoder.encode(request.getPassword()));
+
+       List<Role> roles = roleRepository.findAllById(request.getRoles());
+       user.setRoles(new HashSet<>(roles));
 
         return userMapper.toUserResponse(userRepository.save(user));
     }

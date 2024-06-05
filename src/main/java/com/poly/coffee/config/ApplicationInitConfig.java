@@ -1,13 +1,12 @@
 package com.poly.coffee.config;
 
 import com.poly.coffee.entity.User;
-import com.poly.coffee.enums.Role;
+import com.poly.coffee.enums.RoleEnum;
 import com.poly.coffee.repository.UserRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,7 +28,7 @@ public class ApplicationInitConfig {
         return args -> {
             if (userRepository.findByUsername("admin").isEmpty()) {
                 Set<String> roles = new HashSet<>();
-                roles.add(Role.ADMIN.name());
+                roles.add(RoleEnum.ADMIN.name());
                 User user = User.builder()
                         .username("admin")
                         .password(passwordEncoder.encode("12345678"))

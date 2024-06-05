@@ -13,6 +13,7 @@ public enum ErrorCode {
     USER_NOT_EXISTED(1003, "User not existed", HttpStatus.NOT_FOUND),
     UNAUTHENTICATED(1004, "Unauthenticated", HttpStatus.UNAUTHORIZED),
     UNAUTHORIZED(1006, "You do not have permission", HttpStatus.FORBIDDEN),
+    ROLE_NOT_FOUND(1008, "Role not found", HttpStatus.NOT_FOUND),
     INVALID_PASSWORD(1005, "Password must be at least 8 characters", HttpStatus.BAD_REQUEST),
     CATEGORY_NOT_FOUND(2001, "Category not found", HttpStatus.NOT_FOUND),
     NOT_EMPTY_CATEGORY_NAME(2002, "Category name must be not empty", HttpStatus.BAD_REQUEST),
