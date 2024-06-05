@@ -4,6 +4,7 @@ import com.nimbusds.jose.JOSEException;
 import com.poly.coffee.constant.StatusCode;
 import com.poly.coffee.dto.request.AuthenticationRequest;
 import com.poly.coffee.dto.request.IntrospectRequest;
+import com.poly.coffee.dto.request.LogoutRequest;
 import com.poly.coffee.dto.response.ApiResponse;
 import com.poly.coffee.dto.response.AuthenticationResponse;
 import com.poly.coffee.dto.response.IntrospectResponse;
@@ -26,8 +27,8 @@ public class AuthenticationController {
 
     AuthenticationService authenticationService;
 
-    @PostMapping("/log-in")
-    public ApiResponse<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest request) {
+    @PostMapping("/login")
+    public ApiResponse<AuthenticationResponse> login(@RequestBody AuthenticationRequest request) {
         AuthenticationResponse result = authenticationService.authenticate(request);
 
         return ApiResponse.<AuthenticationResponse>builder()
@@ -43,6 +44,16 @@ public class AuthenticationController {
         return ApiResponse.<IntrospectResponse>builder()
                 .code(StatusCode.SUCCESS_CODE)
                 .result(result)
+                .build();
+    }
+    
+    @PostMapping("/logout")
+    public ApiResponse<Void> logout(@RequestBody LogoutRequest request) throws ParseException, JOSEException {
+        authenticationService.logout(request);
+
+        return ApiResponse.<Void>builder()
+                .code(StatusCode.SUCCESS_CODE)
+                .message("Logout successfully")
                 .build();
     }
 }
