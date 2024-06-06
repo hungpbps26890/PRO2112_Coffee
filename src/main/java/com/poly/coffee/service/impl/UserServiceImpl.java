@@ -1,6 +1,7 @@
 package com.poly.coffee.service.impl;
 
 import com.poly.coffee.dto.request.UserCreationRequest;
+import com.poly.coffee.dto.request.UserUpdateMyInfoRequest;
 import com.poly.coffee.dto.request.UserUpdateRequest;
 import com.poly.coffee.dto.response.UserResponse;
 import com.poly.coffee.entity.Role;
@@ -98,6 +99,18 @@ public class UserServiceImpl implements UserService {
 
        List<Role> roles = roleRepository.findAllById(request.getRoles());
        user.setRoles(new HashSet<>(roles));
+
+        return userMapper.toUserResponse(userRepository.save(user));
+    }
+
+    @Override
+    public UserResponse updateMyInfo(UserUpdateMyInfoRequest request) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String name = authentication.getName();
+        User user = userRepository.findByUsername(name)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+
+        userMapper.updateMyInfo(user, request);
 
         return userMapper.toUserResponse(userRepository.save(user));
     }

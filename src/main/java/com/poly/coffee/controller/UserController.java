@@ -2,6 +2,7 @@ package com.poly.coffee.controller;
 
 import com.poly.coffee.constant.StatusCode;
 import com.poly.coffee.dto.request.UserCreationRequest;
+import com.poly.coffee.dto.request.UserUpdateMyInfoRequest;
 import com.poly.coffee.dto.request.UserUpdateRequest;
 import com.poly.coffee.dto.response.ApiResponse;
 import com.poly.coffee.dto.response.UserResponse;
@@ -79,6 +80,18 @@ public class UserController {
         apiResponse.setResult(userService.updateUser(id,request));
 
         return apiResponse;
+    }
+
+    @PutMapping("/my-info")
+    public ApiResponse<UserResponse> updateMyInfo(
+            @RequestBody UserUpdateMyInfoRequest request
+    ) {
+
+        return ApiResponse.<UserResponse>builder()
+                .code(StatusCode.SUCCESS_CODE)
+                .message("Update user info successfully")
+                .result(userService.updateMyInfo(request))
+                .build();
     }
 
     @DeleteMapping("/{id}")

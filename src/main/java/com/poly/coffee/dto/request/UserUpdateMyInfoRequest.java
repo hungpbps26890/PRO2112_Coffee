@@ -1,24 +1,19 @@
-package com.poly.coffee.dto.response;
+package com.poly.coffee.dto.request;
 
-import com.poly.coffee.entity.Role;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
-import java.util.Set;
+import java.util.List;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class UserResponse {
-    Long id;
-    String username;
+public class UserUpdateMyInfoRequest {
     String email;
     String firstName;
     String lastName;
     LocalDate dob;
-    Set<RoleResponse> roles;
 }
-
