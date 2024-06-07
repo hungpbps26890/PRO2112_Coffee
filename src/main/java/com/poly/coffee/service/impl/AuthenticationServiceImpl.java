@@ -8,6 +8,7 @@ import com.nimbusds.jwt.SignedJWT;
 import com.poly.coffee.dto.request.AuthenticationRequest;
 import com.poly.coffee.dto.request.IntrospectRequest;
 import com.poly.coffee.dto.request.LogoutRequest;
+import com.poly.coffee.dto.request.RefreshRequest;
 import com.poly.coffee.dto.response.AuthenticationResponse;
 import com.poly.coffee.dto.response.IntrospectResponse;
 import com.poly.coffee.entity.InvalidatedToken;
@@ -98,6 +99,33 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .build();
 
         invalidatedTokenRepository.save(invalidatedToken);
+    }
+
+    @Override
+    public AuthenticationResponse refreshToken(RefreshRequest request) throws ParseException, JOSEException {
+        SignedJWT signedToken = verifyToken(request.getToken());
+
+        String jwtId = signedToken.getJWTClaimsSet().getJWTID();
+        Date expiryTime = signedToken.getJWTClaimsSet().getExpirationTime();
+
+        InvalidatedToken invalidatedToken = InvalidatedToken.builder()
+                .id(jwtId)
+                .expiryTime(expiryTime)
+                .build();
+
+        invalidatedTokenRepository.save(invalidatedToken);
+
+        String username = signedToken.getJWTClaimsSet().getSubject();
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+
+        String token = generateToken(user);
+
+        return AuthenticationResponse.builder()
+                .token(token)
+                .authenticated(true)
+                .build();
     }
 
     private SignedJWT verifyToken(String token) throws JOSEException, ParseException {
