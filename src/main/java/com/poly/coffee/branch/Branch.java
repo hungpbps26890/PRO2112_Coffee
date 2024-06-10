@@ -8,6 +8,7 @@ public class Branch {
         System.out.println("A3");
         System.out.println("A4");
         System.out.println("B2");
+        System.out.println("B3");
         System.out.println("A5");
     }
 }
