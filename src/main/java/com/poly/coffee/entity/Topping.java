@@ -7,9 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Data
@@ -32,4 +30,8 @@ public class Topping {
     @JsonIgnore
     @ManyToMany(mappedBy = "toppings")
     private List<Drink> drinks = new ArrayList<>();
+
+    @JsonIgnore
+    @ManyToMany(mappedBy = "toppings")
+    private List<CartItem> cartItems = new ArrayList<>();
 }

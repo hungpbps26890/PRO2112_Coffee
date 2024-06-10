@@ -1,7 +1,11 @@
 package com.poly.coffee.config;
 
+import com.poly.coffee.entity.Role;
 import com.poly.coffee.entity.User;
 import com.poly.coffee.enums.RoleEnum;
+import com.poly.coffee.exception.AppException;
+import com.poly.coffee.exception.ErrorCode;
+import com.poly.coffee.repository.RoleRepository;
 import com.poly.coffee.repository.UserRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -23,19 +27,27 @@ public class ApplicationInitConfig {
 
    PasswordEncoder passwordEncoder;
 
+   RoleRepository roleRepository;
+
     @Bean
     ApplicationRunner applicationRunner(UserRepository userRepository) {
         return args -> {
             if (userRepository.findByUsername("admin").isEmpty()) {
-                Set<String> roles = new HashSet<>();
-                roles.add(RoleEnum.ADMIN.name());
+                Set<Role> roles = new HashSet<>();
+
+                Role roleAdmin = roleRepository.findById(RoleEnum.ADMIN.name())
+                        .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND));
+
+                roles.add(roleAdmin);
+
                 User user = User.builder()
                         .username("admin")
                         .password(passwordEncoder.encode("12345678"))
-//                        .roles(roles)
+                        .roles(roles)
                         .build();
 
                 userRepository.save(user);
+
                 log.warn("Admin user was created with default password: 12345678");
             }
         };
