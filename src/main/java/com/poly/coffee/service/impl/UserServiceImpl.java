@@ -4,12 +4,14 @@ import com.poly.coffee.dto.request.UserCreationRequest;
 import com.poly.coffee.dto.request.UserUpdateMyInfoRequest;
 import com.poly.coffee.dto.request.UserUpdateRequest;
 import com.poly.coffee.dto.response.UserResponse;
+import com.poly.coffee.entity.Cart;
 import com.poly.coffee.entity.Role;
 import com.poly.coffee.entity.User;
 import com.poly.coffee.enums.RoleEnum;
 import com.poly.coffee.exception.AppException;
 import com.poly.coffee.exception.ErrorCode;
 import com.poly.coffee.mapper.UserMapper;
+import com.poly.coffee.repository.CartRepository;
 import com.poly.coffee.repository.RoleRepository;
 import com.poly.coffee.repository.UserRepository;
 import com.poly.coffee.service.UserService;
@@ -38,6 +40,8 @@ public class UserServiceImpl implements UserService {
 
     RoleRepository roleRepository;
 
+    CartRepository cartRepository;
+
     UserMapper userMapper;
 
     PasswordEncoder passwordEncoder;
@@ -59,7 +63,14 @@ public class UserServiceImpl implements UserService {
         roles.add(roleUser);
         user.setRoles(roles);
 
-        return userMapper.toUserResponse(userRepository.save(user));
+        User savedUser = userRepository.save(user);
+
+        Cart cart = new Cart();
+        cart.setUser(savedUser);
+
+        cartRepository.save(cart);
+
+        return userMapper.toUserResponse(savedUser);
     }
 
     @PreAuthorize("hasRole('ADMIN')")

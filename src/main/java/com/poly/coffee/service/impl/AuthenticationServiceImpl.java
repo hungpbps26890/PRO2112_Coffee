@@ -151,7 +151,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         Date expiryTime = (isRefresh)
                 ? new Date(signedJWT.getJWTClaimsSet().getIssueTime()
                 .toInstant()
-                .plus(REFRESHABLE_DURATION, ChronoUnit.SECONDS)
+                .plus(REFRESHABLE_DURATION, ChronoUnit.HOURS)
                 .toEpochMilli())
                 : signedJWT.getJWTClaimsSet().getExpirationTime();
 
@@ -174,7 +174,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .issuer("maycoffee.com.vn")
                 .issueTime(new Date())
                 .expirationTime(new Date(
-                        Instant.now().plus(VALID_DURATION, ChronoUnit.SECONDS).toEpochMilli()
+                        Instant.now().plus(VALID_DURATION, ChronoUnit.HOURS).toEpochMilli()
                 ))
                 .jwtID(UUID.randomUUID().toString())
                 .claim("scope", buildScope(user))

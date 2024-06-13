@@ -21,6 +21,7 @@ public enum ErrorCode {
     DRINK_NOT_FOUND(3001, "Drink not found", HttpStatus.NOT_FOUND),
     TOPPING_NOT_FOUND(4001, "Topping not found", HttpStatus.NOT_FOUND),
     SIZE_NOT_FOUND(5001, "Size not found", HttpStatus.NOT_FOUND),
+    CART_ITEM_NOT_FOUND(6001, "Cart item not found", HttpStatus.NOT_FOUND),
     ;
 
     private final int code;
