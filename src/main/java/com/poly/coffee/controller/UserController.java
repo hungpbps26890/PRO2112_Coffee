@@ -1,6 +1,7 @@
 package com.poly.coffee.controller;
 
 import com.poly.coffee.constant.StatusCode;
+import com.poly.coffee.dto.request.ChangePasswordRequest;
 import com.poly.coffee.dto.request.UserCreationRequest;
 import com.poly.coffee.dto.request.UserUpdateMyInfoRequest;
 import com.poly.coffee.dto.request.UserUpdateRequest;
@@ -100,6 +101,16 @@ public class UserController {
         return ApiResponse.<String>builder()
                 .code(1000)
                 .message("User was deleted successfully")
+                .build();
+    }
+
+    @PutMapping("/change-password")
+    public ApiResponse<Void> changePassword(@RequestBody ChangePasswordRequest request) {
+        userService.changePassword(request);
+
+        return ApiResponse.<Void>builder()
+                .code(1000)
+                .message("Password was changed successfully")
                 .build();
     }
 }

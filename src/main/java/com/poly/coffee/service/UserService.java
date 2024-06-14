@@ -1,5 +1,6 @@
 package com.poly.coffee.service;
 
+import com.poly.coffee.dto.request.ChangePasswordRequest;
 import com.poly.coffee.dto.request.UserCreationRequest;
 import com.poly.coffee.dto.request.UserUpdateMyInfoRequest;
 import com.poly.coffee.dto.request.UserUpdateRequest;
@@ -23,4 +24,6 @@ public interface UserService {
     UserResponse updateMyInfo(UserUpdateMyInfoRequest request);
 
     void deleteUser(Long id);
+
+    void changePassword(ChangePasswordRequest request);
 }

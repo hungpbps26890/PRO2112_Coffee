@@ -33,17 +33,17 @@ public class ApplicationInitConfig {
     ApplicationRunner applicationRunner(UserRepository userRepository) {
         return args -> {
             if (userRepository.findByUsername("admin").isEmpty()) {
-                Set<Role> roles = new HashSet<>();
-
-                Role roleAdmin = roleRepository.findById(RoleEnum.ADMIN.name())
-                        .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND));
-
-                roles.add(roleAdmin);
+//                Set<Role> roles = new HashSet<>();
+//
+//                Role roleAdmin = roleRepository.findById(RoleEnum.ADMIN.name())
+//                        .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND));
+//
+//                roles.add(roleAdmin);
 
                 User user = User.builder()
                         .username("admin")
                         .password(passwordEncoder.encode("12345678"))
-                        .roles(roles)
+//                        .roles(roles)
                         .build();
 
                 userRepository.save(user);

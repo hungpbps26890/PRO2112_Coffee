@@ -20,8 +20,15 @@ public class User {
     private String username;
     private String email;
     private String password;
+
+    @Column(columnDefinition = "nvarchar(255)")
     private String firstName;
+
+    @Column(columnDefinition = "nvarchar(255)")
     private String lastName;
+
+    private String phoneNumber;
+
     private LocalDate dob;
 
     @ManyToMany
