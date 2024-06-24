@@ -51,11 +51,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponse createRequest(UserCreationRequest request) {
-        if (userRepository.existsByUsername(request.getUsername()))
-            throw new AppException(ErrorCode.USER_EXISTED);
 
         if (userRepository.existsByEmail(request.getEmail()))
             throw new AppException(ErrorCode.EMAIL_EXISTED);
+
         User user = userMapper.toUser(request);
 
         user.setPassword(passwordEncoder.encode(request.getPassword()));
@@ -78,7 +77,7 @@ public class UserServiceImpl implements UserService {
         return userMapper.toUserResponse(savedUser);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('ADMIN')")
     @Override
     public List<UserResponse> getAllUsers() {
         return userRepository.findAll()
@@ -87,7 +86,7 @@ public class UserServiceImpl implements UserService {
                 .collect(Collectors.toList());
     }
 
-    @PostAuthorize("returnObject.username == authentication.name")
+//    @PostAuthorize("returnObject.username == authentication.name")
     @Override
     public UserResponse getUserById(Long id) {
         return userMapper.toUserResponse(userRepository.findById(id)
@@ -98,23 +97,21 @@ public class UserServiceImpl implements UserService {
     public UserResponse getMyInfo() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String name = authentication.getName();
-        User user = userRepository.findByUsername(name)
+        User user = userRepository.findByEmail(name)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
         return userMapper.toUserResponse(user);
     }
 
-    @PreAuthorize("hasAuthority('UPDATE_DATA')")
+//    @PreAuthorize("hasAuthority('UPDATE_DATA')")
     @Override
     public UserResponse updateUser(Long id, UserUpdateRequest request) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
 
-        userMapper.updateUser(user, request);
+        user.setIsActive(request.getIsActive());
 
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
-
-        List<Role> roles = roleRepository.findAllById(request.getRoles());
-        user.setRoles(new HashSet<>(roles));
+//        List<Role> roles = roleRepository.findAllById(request.getRoles());
+//        user.setRoles(new HashSet<>(roles));
 
         return userMapper.toUserResponse(userRepository.save(user));
     }
@@ -122,13 +119,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponse updateMyInfo(UserUpdateMyInfoRequest request) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String name = authentication.getName();
+        String email = authentication.getName();
 
-        User user = userRepository.findByUsername(name)
+        User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
-
-        if (userRepository.existsByEmail(request.getEmail()) && !user.getEmail().equals(request.getEmail()))
-            throw new AppException(ErrorCode.EMAIL_EXISTED);
 
         userMapper.updateMyInfo(user, request);
 
@@ -146,9 +140,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public void changePassword(ChangePasswordRequest request) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String name = authentication.getName();
+        String email = authentication.getName();
 
-        User user = userRepository.findByUsername(name)
+        User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
         String password = request.getPassword();

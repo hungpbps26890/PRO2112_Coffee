@@ -5,6 +5,8 @@ import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
+import com.poly.coffee.auth.UserRoot;
+import com.poly.coffee.auth.oauthuser.OAuth2UserInfo;
 import com.poly.coffee.dto.request.AuthenticationRequest;
 import com.poly.coffee.dto.request.IntrospectRequest;
 import com.poly.coffee.dto.request.LogoutRequest;
@@ -24,6 +26,7 @@ import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -60,8 +63,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
-        User user = userRepository.findByUsername(request.getUsername())
+        User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+
+        if (!user.getIsActive()) {
+            throw new AppException(ErrorCode.ACCOUNT_INACTIVE);
+        }
 
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
 
@@ -70,6 +77,22 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         if (!authenticated) {
             throw new AppException(ErrorCode.UNAUTHENTICATED);
         }
+
+        String token = generateToken(user);
+
+        return AuthenticationResponse.builder()
+                .token(token)
+                .authenticated(true)
+                .build();
+    }
+
+    @Override
+    public AuthenticationResponse authenticateOAuth2(Authentication authentication) {
+        UserRoot userRoot = (UserRoot) authentication.getPrincipal();
+
+        User user = userRepository.findByEmail(userRoot.getUsername())
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+
 
         String token = generateToken(user);
 
@@ -130,9 +153,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         invalidatedTokenRepository.save(invalidatedToken);
 
-        String username = signedToken.getJWTClaimsSet().getSubject();
+        String email = signedToken.getJWTClaimsSet().getSubject();
 
-        User user = userRepository.findByUsername(username)
+        User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
 
         String token = generateToken(user);
@@ -170,7 +193,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);
 
         JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder()
-                .subject(user.getUsername())
+                .subject(user.getEmail())
                 .issuer("maycoffee.com.vn")
                 .issueTime(new Date())
                 .expirationTime(new Date(

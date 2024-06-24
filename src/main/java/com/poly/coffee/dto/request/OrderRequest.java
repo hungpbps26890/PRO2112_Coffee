@@ -1,5 +1,7 @@
 package com.poly.coffee.dto.request;
 
+import com.poly.coffee.entity.Address;
+import com.poly.coffee.entity.PaymentMethod;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -8,7 +10,7 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class AuthenticationRequest {
-    String email;
-    String password;
+public class OrderRequest {
+    Address address;
+    PaymentMethod paymentMethod;
 }

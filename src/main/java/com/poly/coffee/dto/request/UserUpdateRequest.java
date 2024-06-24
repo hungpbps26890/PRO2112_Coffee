@@ -1,5 +1,6 @@
 package com.poly.coffee.dto.request;
 
+import com.poly.coffee.enums.AuthTypeEnum;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -13,10 +14,11 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserUpdateRequest {
     String email;
-    String password;
     String firstName;
     String lastName;
     String phoneNumber;
     LocalDate dob;
+    Boolean isActive;
+    AuthTypeEnum authType;
     List<String> roles;
 }

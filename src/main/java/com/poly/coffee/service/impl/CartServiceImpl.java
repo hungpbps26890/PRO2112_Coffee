@@ -168,8 +168,8 @@ public class CartServiceImpl implements CartService {
 
     private User findUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String name = authentication.getName();
-        return userRepository.findByUsername(name)
+        String email = authentication.getName();
+        return userRepository.findByEmail(email)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
     }
 

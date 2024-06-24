@@ -78,14 +78,16 @@ public class UserController {
     ) {
         ApiResponse<UserResponse> apiResponse = new ApiResponse<>();
 
-        apiResponse.setResult(userService.updateUser(id,request));
+        apiResponse.setResult(userService.updateUser(id, request));
+        apiResponse.setMessage("Update user successfully!");
+        apiResponse.setCode(StatusCode.SUCCESS_CODE);
 
         return apiResponse;
     }
 
     @PutMapping("/my-info")
     public ApiResponse<UserResponse> updateMyInfo(
-            @RequestBody UserUpdateMyInfoRequest request
+            @RequestBody @Valid UserUpdateMyInfoRequest request
     ) {
 
         return ApiResponse.<UserResponse>builder()

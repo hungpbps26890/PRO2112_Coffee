@@ -1,6 +1,7 @@
 package com.poly.coffee.dto.response;
 
 import com.poly.coffee.entity.Role;
+import com.poly.coffee.enums.AuthTypeEnum;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -14,11 +15,12 @@ import java.util.Set;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserResponse {
     Long id;
-    String username;
     String email;
     String firstName;
     String lastName;
     String phoneNumber;
+    Boolean isActive;
+    AuthTypeEnum authType;
     LocalDate dob;
     Set<RoleResponse> roles;
 }
