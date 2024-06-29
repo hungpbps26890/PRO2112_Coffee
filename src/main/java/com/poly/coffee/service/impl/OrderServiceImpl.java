@@ -3,6 +3,7 @@ package com.poly.coffee.service.impl;
 import com.poly.coffee.dto.request.OrderRequest;
 import com.poly.coffee.dto.request.UpdateOrderStatusRequest;
 import com.poly.coffee.dto.response.OrderResponse;
+import com.poly.coffee.dto.response.PageResponse;
 import com.poly.coffee.entity.*;
 import com.poly.coffee.exception.AppException;
 import com.poly.coffee.exception.ErrorCode;
@@ -45,6 +46,8 @@ public class OrderServiceImpl implements OrderService {
     OrderMapper orderMapper;
 
     CartService cartService;
+
+    SearchRepository searchRepository;
 
     @Override
     public OrderResponse createOrder(OrderRequest request) {
@@ -134,6 +137,11 @@ public class OrderServiceImpl implements OrderService {
         order.setOrderStatus(orderStatus);
 
         return orderMapper.toOrderResponse(orderRepository.save(order));
+    }
+
+    @Override
+    public PageResponse<?> getOrdersWithCriteria(int pageNo, int pageSize, String... search) {
+        return searchRepository.advancedSearchOrdersWithCriteria(pageNo, pageSize, search);
     }
 
     private User findUser() {
