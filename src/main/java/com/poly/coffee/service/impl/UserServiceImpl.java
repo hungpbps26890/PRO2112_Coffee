@@ -110,8 +110,8 @@ public class UserServiceImpl implements UserService {
 
         user.setIsActive(request.getIsActive());
 
-//        List<Role> roles = roleRepository.findAllById(request.getRoles());
-//        user.setRoles(new HashSet<>(roles));
+        List<Role> roles = roleRepository.findAllById(request.getRoles());
+        user.setRoles(new HashSet<>(roles));
 
         return userMapper.toUserResponse(userRepository.save(user));
     }

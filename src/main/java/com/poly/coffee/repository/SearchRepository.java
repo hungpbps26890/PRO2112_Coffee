@@ -85,7 +85,6 @@ public class SearchRepository {
                 .build();
     }
 
-
     public PageResponse<?> advancedSearchDrinksWithCriteria(int pageNo, int pageSize, String sortBy, String categoryName, String... search) {
 
         List<SearchCriteria> criteriaList = new ArrayList<>();
