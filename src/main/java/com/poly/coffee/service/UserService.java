@@ -26,4 +26,6 @@ public interface UserService {
     void deleteUser(Long id);
 
     void changePassword(ChangePasswordRequest request);
+
+    User getUserByEmail(String email);
 }

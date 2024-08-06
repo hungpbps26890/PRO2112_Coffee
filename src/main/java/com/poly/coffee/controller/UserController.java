@@ -1,13 +1,11 @@
 package com.poly.coffee.controller;
 
 import com.poly.coffee.constant.StatusCode;
-import com.poly.coffee.dto.request.ChangePasswordRequest;
-import com.poly.coffee.dto.request.UserCreationRequest;
-import com.poly.coffee.dto.request.UserUpdateMyInfoRequest;
-import com.poly.coffee.dto.request.UserUpdateRequest;
+import com.poly.coffee.dto.request.*;
 import com.poly.coffee.dto.response.ApiResponse;
 import com.poly.coffee.dto.response.UserResponse;
 import com.poly.coffee.entity.User;
+import com.poly.coffee.service.MailService;
 import com.poly.coffee.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -32,6 +30,8 @@ import java.util.List;
 public class UserController {
 
     UserService userService;
+
+    MailService mailService;
 
     @Operation(summary = "Create a new user")
     @PostMapping
@@ -119,10 +119,22 @@ public class UserController {
     @PutMapping("/change-password")
     public ApiResponse<Void> changePassword(@RequestBody ChangePasswordRequest request) {
         userService.changePassword(request);
-
         return ApiResponse.<Void>builder()
                 .code(1000)
                 .message("Password was changed successfully")
+                .build();
+    }
+
+    @Operation(summary = "Forgot Password")
+    @PutMapping("/forgot-password")
+    public ApiResponse<Void> forgotPassword(@RequestBody UserResetPasswordRequest request) {
+        User user = userService.getUserByEmail(request.getEmail());
+
+        mailService.sendForgotPassword(user);
+
+        return ApiResponse.<Void>builder()
+                .code(1000)
+                .message("Your password is reset successfully. Please check your email!")
                 .build();
     }
 }

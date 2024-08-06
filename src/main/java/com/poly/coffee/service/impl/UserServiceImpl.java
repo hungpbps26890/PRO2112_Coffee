@@ -15,6 +15,7 @@ import com.poly.coffee.mapper.UserMapper;
 import com.poly.coffee.repository.CartRepository;
 import com.poly.coffee.repository.RoleRepository;
 import com.poly.coffee.repository.UserRepository;
+import com.poly.coffee.service.MailService;
 import com.poly.coffee.service.UserService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -49,6 +50,8 @@ public class UserServiceImpl implements UserService {
 
     PasswordEncoder passwordEncoder;
 
+    MailService mailService;
+
     @Override
     public UserResponse createRequest(UserCreationRequest request) {
 
@@ -74,6 +77,9 @@ public class UserServiceImpl implements UserService {
 
         cartRepository.save(cart);
 
+        //Gửi email create account
+        mailService.sendCreateAccount(savedUser);
+
         return userMapper.toUserResponse(savedUser);
     }
 
@@ -96,9 +102,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponse getMyInfo() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String name = authentication.getName();
-        User user = userRepository.findByEmail(name)
-                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        String email = authentication.getName();
+        User user = getUserByEmail(email);
         return userMapper.toUserResponse(user);
     }
 
@@ -121,8 +126,7 @@ public class UserServiceImpl implements UserService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
 
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        User user = getUserByEmail(email);
 
         userMapper.updateMyInfo(user, request);
 
@@ -142,8 +146,7 @@ public class UserServiceImpl implements UserService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
 
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        User user = getUserByEmail(email);
 
         String password = request.getPassword();
         String newPassword = request.getNewPassword();
@@ -161,7 +164,11 @@ public class UserServiceImpl implements UserService {
         } else {
             throw new AppException(ErrorCode.INVALID_CHANGE_PASSWORD);
         }
+    }
 
-
+    @Override
+    public User getUserByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
     }
 }
