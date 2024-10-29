@@ -55,12 +55,16 @@ public class OrderServiceImpl implements OrderService {
 
         Cart cart = cartRepository.findByUserId(user.getId());
 
-        Address savedAddress = addressRepository.save(request.getAddress());
+        Order order = new Order();
+
+        if (request.getAddress() != null) {
+            Address savedAddress = addressRepository.save(request.getAddress());
+            order.setAddress(savedAddress);
+        }
+
 
         PaymentMethod paymentMethod = paymentMethodRepository.findById(request.getPaymentMethod().getId())
                 .orElseThrow(() -> new AppException(ErrorCode.PAYMENT_METHOD_NOT_FOUND));
-
-        Order order = new Order();
 
         order.setUser(user);
         order.setCreateDate(LocalDateTime.now());
@@ -68,7 +72,6 @@ public class OrderServiceImpl implements OrderService {
         order.setTotalItems(cart.getTotalItems());
         order.setTotalPrice(cart.getTotalPrice());
         order.setPaymentMethod(paymentMethod);
-        order.setAddress(savedAddress);
 
         Order createdOrder = orderRepository.save(order);
 
@@ -120,14 +123,14 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrderResponse getOrderById(Long id) {
         Order order = orderRepository.findById(id)
-                .orElseThrow(()-> new AppException(ErrorCode.ORDER_NOT_NOT_FOUND));
+                .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_NOT_FOUND));
         return orderMapper.toOrderResponse(order);
     }
 
     @Override
     public OrderResponse updateOrderStatus(UpdateOrderStatusRequest request) {
         Order order = orderRepository.findById(request.getId())
-                .orElseThrow(()-> new AppException(ErrorCode.ORDER_NOT_NOT_FOUND));
+                .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_NOT_FOUND));
 
         OrderStatus orderStatus = orderStatusRepository.findById(request.getOrderStatus().getId())
                 .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_NOT_FOUND));

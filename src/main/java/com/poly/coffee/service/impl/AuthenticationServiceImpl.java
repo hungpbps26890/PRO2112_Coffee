@@ -14,10 +14,12 @@ import com.poly.coffee.dto.request.RefreshRequest;
 import com.poly.coffee.dto.response.AuthenticationResponse;
 import com.poly.coffee.dto.response.IntrospectResponse;
 import com.poly.coffee.entity.InvalidatedToken;
+import com.poly.coffee.entity.Role;
 import com.poly.coffee.entity.User;
 import com.poly.coffee.exception.AppException;
 import com.poly.coffee.exception.ErrorCode;
 import com.poly.coffee.repository.InvalidatedTokenRepository;
+import com.poly.coffee.repository.RoleRepository;
 import com.poly.coffee.repository.UserRepository;
 import com.poly.coffee.service.AuthenticationService;
 import lombok.AccessLevel;
@@ -49,6 +51,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     InvalidatedTokenRepository invalidatedTokenRepository;
 
+    RoleRepository roleRepository;
+
     @NonFinal
     @Value("${spring.jwt.signerKey}")
     protected String SIGNER_KEY;
@@ -62,7 +66,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     protected Long REFRESHABLE_DURATION;
 
     @Override
-    public AuthenticationResponse authenticate(AuthenticationRequest request) {
+    public AuthenticationResponse authenticate(AuthenticationRequest request, boolean verifyAdmin) {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
@@ -76,6 +80,15 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         if (!authenticated) {
             throw new AppException(ErrorCode.UNAUTHENTICATED);
+        }
+
+        if (verifyAdmin == true) {
+            Role admin = roleRepository.findById("ADMIN")
+                    .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND));
+
+            if (!user.getRoles().contains(admin)) {
+                throw new AppException(ErrorCode.UNAUTHORIZED);
+            }
         }
 
         String token = generateToken(user);

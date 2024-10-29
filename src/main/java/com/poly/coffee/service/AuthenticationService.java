@@ -13,7 +13,7 @@ import java.text.ParseException;
 
 public interface AuthenticationService {
 
-    AuthenticationResponse authenticate(AuthenticationRequest request);
+    AuthenticationResponse authenticate(AuthenticationRequest request, boolean verifyAdmin);
 
     AuthenticationResponse authenticateOAuth2(Authentication authentication);
 

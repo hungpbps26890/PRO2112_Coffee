@@ -28,7 +28,17 @@ public class AuthenticationController {
 
     @PostMapping("/login")
     public ApiResponse<AuthenticationResponse> login(@RequestBody AuthenticationRequest request) {
-        AuthenticationResponse result = authenticationService.authenticate(request);
+        AuthenticationResponse result = authenticationService.authenticate(request, false);
+
+        return ApiResponse.<AuthenticationResponse>builder()
+                .code(StatusCode.SUCCESS_CODE)
+                .result(result)
+                .build();
+    }
+
+    @PostMapping("/admin/login")
+    public ApiResponse<AuthenticationResponse> loginAdmin(@RequestBody AuthenticationRequest request) {
+        AuthenticationResponse result = authenticationService.authenticate(request, true);
 
         return ApiResponse.<AuthenticationResponse>builder()
                 .code(StatusCode.SUCCESS_CODE)
